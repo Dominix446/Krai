@@ -139,7 +139,7 @@ public class KraiTest {
         Krai node1 = new Krai(1, new Krai[0], null);
         Krai node2 = new Krai(2, new Krai[0], null);
         
-    node1.setLinks(new Krai[]{node2});
+        node1.link = new Krai[]{node2};
         
         assertTrue("Should have 1 link", node1.getLinks().length == 1);
         assertTrue("Link should point to node2", node1.getLinks()[0] == node2);
@@ -151,7 +151,7 @@ public class KraiTest {
         Krai node2 = new Krai(2, new Krai[0], null);
         Krai node3 = new Krai(3, new Krai[0], null);
         
-    node1.setLinks(new Krai[]{node2, node3});
+        node1.link = new Krai[]{node2, node3};
         
         assertTrue("Should have 2 links", node1.getLinks().length == 2);
         assertTrue("First link correct", node1.getLinks()[0] == node2);
@@ -265,9 +265,9 @@ public class KraiTest {
         Krai nodeB = new Krai(2, tempLinks, null);
         Krai nodeC = new Krai(3, tempLinks, null);
         
-    nodeA.setLinks(new Krai[]{nodeB});
-    nodeB.setLinks(new Krai[]{nodeC});
-    nodeC.setLinks(new Krai[]{nodeA});
+        nodeA.link = new Krai[]{nodeB};
+        nodeB.link = new Krai[]{nodeC};
+        nodeC.link = new Krai[]{nodeA};
         
         assertTrue("A links to B", nodeA.getLinks()[0] == nodeB);
         assertTrue("B links to C", nodeB.getLinks()[0] == nodeC);
