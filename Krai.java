@@ -125,20 +125,30 @@ public class Krai {
             System.out.println("Invalid index given ");
             return protocol;
         } else {
-            Krai temp = protocol.link[a];
-            protocol.link[a] = this;
-            protocol.link[a].protocol = temp.protocol;
+            Krai temp = new Krai();
+            temp.dataInt=protocol.link[a].dataInt;
+            temp.dataDouble=protocol.link[a].dataDouble;
+            temp.dataString=protocol.link[a].dataString;
+            temp.dataBool=protocol.link[a].dataBool;
+            temp.dataChar=protocol.link[a].dataChar;
+            temp.link=Arrays.copyOf(protocol.link[a].link,protocol.link[a].link.length);
+            protocol.link[a].dataInt = this.dataInt;
+            protocol.link[a].dataDouble = this.dataDouble;
+            protocol.link[a].dataBool = this.dataBool;
+            protocol.link[a].dataChar = this.dataChar;
+            protocol.link[a].dataString = this.dataString;
+            protocol.link[a].link = Arrays.copyOf(this.link, this.link.length);
             this.dataInt = temp.dataInt;
             this.dataDouble = temp.dataDouble;
             this.dataBool = temp.dataBool;
             this.dataChar = temp.dataChar;
             this.dataString = temp.dataString;
-            this.link = Arrays.copyOf(temp.link, temp.link.length);
+            this.link = Arrays.copyOf(temp.link, temp.link.length);           
             return protocol;
         }
     }
 
-  /*  Krai protocol_diffsim(Krai protocol, int a) {
+    Krai protocol_diffsim(Krai protocol, int a) {
         if (a >= this.link.length || a < 0) {
             return protocol;
         }
@@ -156,7 +166,7 @@ public class Krai {
             protocol = protocol.protocol_ROLARI(p, protocol);
             return protocol;
         }
-    }*/
+    }
 
     public static void main(String[] args) {
         Krai demo = new Krai();
