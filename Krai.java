@@ -22,60 +22,31 @@ public class Krai {
     Krai(int d, Krai[] links, Krai p) {
         dataInt = d;
         protocol = p;
-        setLinks(links);
+        link = Arrays.copyOf(links, links.length);
     }
 
     Krai(double d, Krai[] links, Krai p) {
         dataDouble = d;
         protocol = p;
-        setLinks(links);
+        link = Arrays.copyOf(links, links.length);
     }
 
     Krai(boolean b, Krai[] links, Krai p) {
         dataBool = b;
         protocol = p;
-        setLinks(links);
+        link = Arrays.copyOf(links, links.length);
     }
 
     Krai(String s, Krai[] links, Krai p) {
         dataString = s;
         protocol = p;
-        setLinks(links);
+        link = Arrays.copyOf(links, links.length);
     }
 
     Krai(char c, Krai[] links, Krai p) {
         dataChar = c;
         protocol = p;
-        setLinks(links);
-    }
-
-    public void setLinks(Krai[] links) {
-        if (links == null) {
-            this.link = new Krai[0];
-            return;
-        }
-        this.link = Arrays.copyOf(links, links.length);
-        for (Krai k : links) {
-            if (k == null) continue;
-            boolean found = false;
-            if (k.link != null) {
-                for (Krai kk : k.link) {
-                    if (kk == this) {
-                        found = true;
-                        break;
-                    }
-                }
-            }
-            if (!found) {
-                if (k.link == null) {
-                    k.link = new Krai[]{this};
-                } else {
-                    Krai[] newArr = Arrays.copyOf(k.link, k.link.length + 1);
-                    newArr[newArr.length - 1] = this;
-                    k.link = newArr;
-                }
-            }
-        }
+        link = Arrays.copyOf(links, links.length);
     }
 
     Krai[] getLinks() {
@@ -126,7 +97,7 @@ public class Krai {
             n = sc.nextInt();
             Krai[] newLink = new Krai[1];
             nptr = new Krai(n, newLink, null);
-            current.setLinks(new Krai[]{nptr});
+            current.link = Arrays.copyOf(new Krai[]{nptr}, 1);
             current = nptr;
         }
 
@@ -155,30 +126,27 @@ public class Krai {
         }
         if (a >= protocol.link.length || a < 0) {
             System.out.println("Invalid index given ");
-            return protocol;
+            return protocol;    
         } else {
-            Krai target = protocol.link[a];
-            if (target == null) return protocol;
             Krai temp = new Krai();
-            temp.dataInt = target.dataInt;
-            temp.dataDouble = target.dataDouble;
-            temp.dataString = target.dataString;
-            temp.dataBool = target.dataBool;
-            temp.dataChar = target.dataChar;
-            temp.link = Arrays.copyOf(target.link, target.link == null ? 0 : target.link.length);
-            target.dataInt = this.dataInt;
-            target.dataDouble = this.dataDouble;
-            target.dataBool = this.dataBool;
-            target.dataChar = this.dataChar;
-            target.dataString = this.dataString;
-            target.link = Arrays.copyOf(this.link, this.link == null ? 0 : this.link.length);
+            temp.dataInt=protocol.link[a].dataInt;
+            temp.dataDouble=protocol.link[a].dataDouble;
+            temp.dataString=protocol.link[a].dataString;
+            temp.dataBool=protocol.link[a].dataBool;
+            temp.dataChar=protocol.link[a].dataChar;
+            temp.link=Arrays.copyOf(protocol.link[a].link,protocol.link[a].link.length);
+            protocol.link[a].dataInt = this.dataInt;
+            protocol.link[a].dataDouble = this.dataDouble;
+            protocol.link[a].dataBool = this.dataBool;
+            protocol.link[a].dataChar = this.dataChar;
+            protocol.link[a].dataString = this.dataString;
+            protocol.link[a].link = Arrays.copyOf(this.link, this.link.length);
             this.dataInt = temp.dataInt;
             this.dataDouble = temp.dataDouble;
             this.dataBool = temp.dataBool;
             this.dataChar = temp.dataChar;
             this.dataString = temp.dataString;
-            this.link = Arrays.copyOf(temp.link, temp.link == null ? 0 : temp.link.length);
-            if (a >= 0 && a < protocol.link.length) protocol.link[a] = this;
+            this.link = Arrays.copyOf(temp.link, temp.link.length);           
             return protocol;
         }
     }
