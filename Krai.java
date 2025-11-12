@@ -108,41 +108,6 @@ public class Krai {
         return dataTag;
     }
 
-    void linked_list() {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Enter data for start:");
-        int n = sc.nextInt();
-
-        Krai start_protocol = new Krai();
-
-        System.out.println("Enter number of nodes:");
-        int t = sc.nextInt();
-        Krai[] links = new Krai[1];
-        Krai start = new Krai(n, links, start_protocol);
-
-        Krai nptr = start;
-        Krai current = nptr;
-
-        for (int i = 1; i < t; i++) {
-            System.out.print("Enter data for node " + (i + 1) + ": ");
-            n = sc.nextInt();
-            Krai[] newLink = new Krai[1];
-            nptr = new Krai(n, newLink, null);
-            current.link = Arrays.copyOf(new Krai[]{nptr}, 1);
-            current = nptr;
-        }
-
-        System.out.println("\nLinked Krai chain formed:");
-        Krai temp = start;
-        int idx = 1;
-        while (temp != null) {
-            System.out.println("Node " + idx + " → dataInt: " + temp.getDataInt() +
-                               " | protocol: " + (temp.getProtocol() == null ? "null" : "root"));
-            if (temp.link.length == 0 || temp.link[0] == null) break;
-            temp = temp.link[0];
-            idx++;
-        }
-    }
 
     Krai protocol_equals(Krai protocol) {
         if (this.dataInt == protocol.dataInt) {
@@ -202,9 +167,6 @@ public class Krai {
         }
     }
 
-
-    public static void main(String[] args) {
-        Krai demo = new Krai();
-        demo.linked_list();
-    }
+       
+    
 }
