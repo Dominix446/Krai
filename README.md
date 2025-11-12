@@ -58,5 +58,4 @@ protocol_diffsim(Krai protocol, int a)
 Compares the current node’s link at index a with each link in the given protocol.
 Finds the most similar one (by smallest integer difference) and applies a protocol_ROLARI at that position.
 
-AL(int n) 
-Active  learning sort of autocomplete. Cn complete most sorts of daily use patterns.
+
