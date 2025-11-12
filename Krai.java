@@ -23,30 +23,50 @@ public class Krai {
         dataInt = d;
         protocol = p;
         link = Arrays.copyOf(links, links.length);
+        dataDouble=0.0;
+        dataBool=false;
+        dataChar='\0';
+        dataString="";
     }
 
     Krai(double d, Krai[] links, Krai p) {
         dataDouble = d;
         protocol = p;
         link = Arrays.copyOf(links, links.length);
+        dataInt=0;
+        dataBool=false;
+        dataChar='\0';
+        dataString="";
     }
 
     Krai(boolean b, Krai[] links, Krai p) {
         dataBool = b;
         protocol = p;
         link = Arrays.copyOf(links, links.length);
+        dataInt=0;
+        dataChar='\0';
+        dataDouble=0.0;
+        dataString="";
     }
 
     Krai(String s, Krai[] links, Krai p) {
         dataString = s;
         protocol = p;
         link = Arrays.copyOf(links, links.length);
+        dataBool=false;
+        dataChar='\0';
+        dataInt=0;
+        dataDouble=0.0;
     }
 
     Krai(char c, Krai[] links, Krai p) {
         dataChar = c;
         protocol = p;
         link = Arrays.copyOf(links, links.length);
+        dataInt=0;
+        dataDouble=0.0;
+        dataBool=false;
+        dataString="";
     }
 
     Krai[] getLinks() {
@@ -232,7 +252,8 @@ public class Krai {
                         for (int c2 = col; c2 <= order; c2++) mat[r2][c2] -= mult * mat[col][c2];
                     }
                 }
-                if (singular) continue;
+                if (singular){                    
+                   continue;}
                 double[] coeffs = new double[order];
                 for (int i = 0; i < order; i++) coeffs[i] = mat[i][order];
                 double rss = 0;
@@ -244,6 +265,11 @@ public class Krai {
                 double rms = Math.sqrt(rss / Math.max(1, m));
                 double rel = base == 0 ? rms : rms / base;
                 if (rel <= tol) { found = true; foundOrder = order; foundCoeffs = coeffs; break; }
+            }
+            if (found && foundCoeffs != null && foundOrder > 0) {
+                out += (typ == 0 ? "I:AR;O=" : (typ == 1 ? "D:AR;O=" : "B:AR;O=")) + foundOrder + ";C=";
+                for (int ii = 0; ii < foundCoeffs.length; ii++) { out += Double.toString(foundCoeffs[ii]); if (ii + 1 < foundCoeffs.length) out += ","; }
+                out += ";";
             }
             if (!found) {
                 int maxPoly = maxOrder;
@@ -349,6 +375,88 @@ public class Krai {
         return this;
     }
 
+    public Krai protocol_synthesizer(int n) {
+        this.AL(n);
+        Krai proto = new Krai();
+        proto.dataString = this.dataString;
+        String s = this.dataString;
+        int idx = s.indexOf(";C=");
+        if (idx >= 0) {
+            int start = idx + 3;
+            int end = s.indexOf(";", start);
+            if (end < 0) end = s.length();
+            String list = s.substring(start, end);
+            String[] parts = list.split(",");
+            Krai[] childs = new Krai[parts.length];
+            for (int i = 0; i < parts.length; i++) {
+                double v = 0.0;
+                try { v = Double.parseDouble(parts[i]); } catch (Exception ex) { v = 0.0; }
+                childs[i] = new Krai(v, new Krai[0], proto);
+            }
+            proto.link = Arrays.copyOf(childs, childs.length);
+        } else {
+            proto.link = new Krai[0];
+        }
+        return proto;
+    }
+
+    public Krai protocol_injector_align(int n) {
+        this.AL(n);
+        if (this.protocol == null) return this;
+        Krai prot = this.protocol;
+        for (int a = 0; a < this.link.length; a++) {
+            prot = this.protocol_diffsim(prot, a);
+            if (prot == null) return this;
+        }
+        this.protocol = prot;
+        return prot;
+    }
+
+    public Krai predict_and_append(int n) {
+        this.AL(n);
+        if (this.dataString == null) return this;
+        String s = this.dataString;
+        int ip = s.indexOf("I:AR");
+        if (ip < 0) return this;
+        int cidx = s.indexOf(";C=", ip);
+        if (cidx < 0) return this;
+        int start = cidx + 3;
+        int end = s.indexOf(";", start);
+        if (end < 0) end = s.length();
+        String[] parts = s.substring(start, end).split(",");
+        int order = parts.length;
+        int oidx = s.indexOf("O=", ip);
+        if (oidx >= 0 && oidx < cidx) {
+            int ostart = oidx + 2;
+            int oend = s.indexOf(";", ostart);
+            if (oend < 0 || oend > cidx) oend = cidx;
+            try { order = Integer.parseInt(s.substring(ostart, oend)); } catch (Exception ex) { order = parts.length; }
+        }
+        double[] coeffs = new double[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            try { coeffs[i] = Double.parseDouble(parts[i]); } catch (Exception ex) { coeffs[i] = 0.0; }
+        }
+        int len = 0;
+        Krai p = this;
+        while (p != null) { len++; p = p.protocol; }
+        if (len < 1) return this;
+        Krai[] nodes = new Krai[len];
+        p = this;
+        for (int i = len - 1; i >= 0; i--) { nodes[i] = p; p = p.protocol; }
+        int[] ia = new int[len];
+        for (int i = 0; i < len; i++) ia[i] = nodes[i].dataInt;
+        double pred = 0.0;
+        for (int j = 0; j < order && j < coeffs.length; j++) {
+            int idxVal = len - 1 - j;
+            if (idxVal >= 0) pred += coeffs[j] * ia[idxVal];
+        }
+        int predicted = (int)Math.round(pred);
+        Krai child = new Krai(predicted, new Krai[0], this.protocol);
+        Krai[] nl = Arrays.copyOf(this.link, this.link.length + 1);
+        nl[nl.length - 1] = child;
+        this.link = Arrays.copyOf(nl, nl.length);
+        return this;
+    }
  
 
     public static void main(String[] args) {
