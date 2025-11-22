@@ -110,7 +110,7 @@ public class Krai {
 
 
     Krai protocol_equals(Krai protocol) {
-        if (this.dataInt == protocol.dataInt) {
+        if ((this.dataInt == protocol.dataInt) && (this.dataString.equals(protocol.dataString)) && (this.dataBool== protocol.dataBool) && (this.dataDouble==protocol.dataDouble) && (this.dataChar == protocol.dataChar)) {
             return protocol;
         }
         return null;
