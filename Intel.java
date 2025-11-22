@@ -22,3 +22,7 @@ class Intel{
       }
     }
   }
+    double dissimilarity(Krai a,Krai b){
+      return Math.abs(a.value - b.value);
+    }
+  }
