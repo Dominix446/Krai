@@ -6,6 +6,8 @@ It’s designed as an experiment in recursive structure, reflexive data modeling
 Why this exists
 I wanted a compact, understandable object that mixes data, topology and a notion of “governing node” (protocol).
 
+Then I decided, why stop? I proceeded to work on my own ai model.
+
 | Field        | Type     | Description                             |
 | :----------- | :------- | :-------------------------------------- |
 | dataInt      | int      | integer payload (default 0)             |
@@ -57,5 +59,7 @@ Returns the modified protocol.
 protocol_diffsim(Krai protocol, int a)
 Compares the current node’s link at index a with each link in the given protocol.
 Finds the most similar one (by smallest integer difference) and applies a protocol_ROLARI at that position.
+
+
 
 
